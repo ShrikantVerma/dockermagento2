@@ -1,0 +1,27 @@
+version: '2'
+services:
+  webserver:
+    build: 
+      context: ./webserver/
+    container_name: nginx
+    volumes:
+      - ./magento2:/var/www/html
+      - ./webserver/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+    ports:
+      - "80:80"
+      - "443:443"
+ 
+  database_server:
+    build:
+      context: ./database_server/
+      args:
+        - mysql_password=root
+        - mysql_database=magento223
+    container_name: mysql
+    volumes:
+      - ./database_server/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+      - ./database_server/mysql.sh:/etc/mysql.sh
+      - ./database_server/import.sh:/etc/import.sh
+      - ./database_server/magento223.sql:/etc/magento223.sql
+    ports:
+      - "3306:3306"
